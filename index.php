@@ -121,32 +121,18 @@ $tasks = [
 
                 <table class="tasks">
                     <?php foreach ($tasks as $key => $value): ?>
-                   <!--
-                    <tr class="tasks__item task">
-                        <td class="task__select">
-                            <label class="checkbox task__checkbox">
-                                <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                                <span class="checkbox__text"></span>
-                            </label>
-                        </td>
-
-                        <td class="task__file">
-                            <a class="download-link" href="#">Home.psd</a>
-                        </td>
-
-                        <td class="task__date"></td>
-                    </tr>-->
-                    <?php if ($show_complete_tasks === 0 and $value['completed']) continue; ?>
-                        <tr class="tasks__item task <?php if ($value['completed']): ?>task--completed<?php endif; ?>">
-                            <td class="task__select">
-                                <label class="checkbox task__checkbox">
-                                    <input class="checkbox__input visually-hidden" type="checkbox">
-                                    <span class="checkbox__text"><?=$value['task']; ?></span>
-                                </label>
-                            </td>
-                            <td class="task__date"><?=$value['date_of_completion']; ?></td>
-                            <td class="task__controls"><?=$value['category']; ?></td>
-                        </tr>
+                        <?php if ($show_complete_tasks === 1 or !$value['completed']): ?>
+                            <tr class="tasks__item task <?php if ($value['completed']): ?>task--completed<?php endif; ?>">
+                                <td class="task__select">
+                                    <label class="checkbox task__checkbox">
+                                        <input class="checkbox__input visually-hidden" type="checkbox">
+                                        <span class="checkbox__text"><?=$value['task']; ?></span>
+                                    </label>
+                                </td>
+                                <td class="task__date"><?=$value['date_of_completion']; ?></td>
+                                <td class="task__controls"><?=$value['category']; ?></td>
+                            </tr>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </table>
             </main>
