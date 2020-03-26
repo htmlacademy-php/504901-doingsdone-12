@@ -157,3 +157,17 @@ function count_tasks(array $tasks, $name) {
     }
     return $count;
 }
+/**
+ * Подсчитывает количество часов оставшихся до выполнения задачи
+ * @param  string дата выполнения
+  * @return integer Количество часов
+ */
+function count_hours($date) {
+    if (isset($date)) {
+        $now = date("d.m.y");
+        $diff = (strtotime($date) - strtotime($now))/3600;
+        return $diff;
+    }
+
+    return 1000;
+}

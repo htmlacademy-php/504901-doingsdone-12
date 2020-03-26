@@ -44,7 +44,8 @@
     <table class="tasks">
         <?php foreach ($tasks as $key => $value): ?>
             <?php if ($show_complete_tasks === 1 or !$value['completed']): ?>
-                <tr class="tasks__item task <?php if ($value['completed']): ?>task--completed<?php endif; ?>">
+                <tr class="tasks__item task <?php if ($value['completed']): ?>task--completed<?php endif; ?>
+                <?php if (count_hours($value['date_of_completion'])<=24 && !$value['completed']): ?>task--important<?php endif; ?>">
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden" type="checkbox">
