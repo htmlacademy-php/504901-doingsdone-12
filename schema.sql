@@ -23,3 +23,4 @@ CREATE TABLE tasks (
     id_project INT NOT NULL,
     FOREIGN KEY (id_project) REFERENCES projects (id_project)
  );
+CREATE INDEX name_task ON tasks(name_task);
