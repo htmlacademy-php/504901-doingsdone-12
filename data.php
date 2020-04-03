@@ -25,5 +25,4 @@ function get_tasks($id)
     $result = mysqli_query($con, $sql);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
-$projects = get_projects($current_user);
-$tasks = get_tasks($current_user);
+
