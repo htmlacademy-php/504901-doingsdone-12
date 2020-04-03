@@ -151,7 +151,7 @@ function include_template($name, array $data = []) {
 function count_tasks(array $tasks, $name) {
     $count = 0;
     foreach ($tasks as $key => $value) {
-        if ($value['category'] === $name) {
+        if ($value['name'] === $name) {
             $count++;
         }
     }

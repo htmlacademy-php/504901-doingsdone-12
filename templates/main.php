@@ -5,8 +5,8 @@
         <ul class="main-navigation__list">
             <?php foreach ($projects as $value): ?>
                 <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link" href="#"><?=htmlspecialchars($value);?></a>
-                    <span class="main-navigation__list-item-count"><?=count_tasks($tasks, $value); ?></span>
+                    <a class="main-navigation__list-item-link" href="#"><?=htmlspecialchars($value['name']);?></a>
+                    <span class="main-navigation__list-item-count"><?=count_tasks($tasks, $value['name']); ?></span>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -43,17 +43,17 @@
 
     <table class="tasks">
         <?php foreach ($tasks as $key => $value): ?>
-            <?php if ($show_complete_tasks === 1 or !$value['completed']): ?>
-                <tr class="tasks__item task <?php if ($value['completed']): ?>task--completed<?php endif; ?>
-                <?php if (count_hours($value['date_of_completion'])<=24 && !$value['completed']): ?>task--important<?php endif; ?>">
+            <?php if ($show_complete_tasks === 1 or !$value['status']): ?>
+                <tr class="tasks__item task <?php if ($value['status']): ?>task--completed<?php endif; ?>
+                <?php if (count_hours($value['date_of_completion'])<=24 && !$value['status']): ?>task--important<?php endif; ?>">
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden" type="checkbox">
-                            <span class="checkbox__text"><?=htmlspecialchars($value['task']); ?></span>
+                            <span class="checkbox__text"><?=htmlspecialchars($value['name_task']); ?></span>
                         </label>
                     </td>
                     <td class="task__date"><?=$value['date_of_completion']; ?></td>
-                    <td class="task__controls"><?=$value['category']; ?></td>
+                    <td class="task__controls"><?=$value['name']; ?></td>
                 </tr>
             <?php endif; ?>
         <?php endforeach; ?>
