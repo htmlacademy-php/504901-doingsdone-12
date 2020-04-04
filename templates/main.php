@@ -5,8 +5,11 @@
         <ul class="main-navigation__list">
             <?php foreach ($projects as $value): ?>
                 <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link" href="#"><?=htmlspecialchars($value['name']);?></a>
-                    <span class="main-navigation__list-item-count"><?=count_tasks($tasks, $value['name']); ?></span>
+                    <a class="main-navigation__list-item-link
+                    <?php if ($id_project === $value['id_project']):?>main-navigation__list-item--active <?php endif; ?>"
+                       href="/?id=<?=$value['id_project']; ?>">
+                        <?=htmlspecialchars($value['name']);?></a>
+                    <span class="main-navigation__list-item-count"><?=count_tasks($value['id_project']); ?></span>
                 </li>
             <?php endforeach; ?>
         </ul>
