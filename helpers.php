@@ -142,21 +142,7 @@ function include_template($name, array $data = []) {
 
     return $result;
 }
-/**
- * Подсчитывает количество задач для проекта
- * @param  array $tasks Ассоциативный массив задач
- * @param string $name Название проекта
- * @return integer Количество задач
- */
-function count_tasks(array $tasks, $name) {
-    $count = 0;
-    foreach ($tasks as $key => $value) {
-        if ($value['name'] === $name) {
-            $count++;
-        }
-    }
-    return $count;
-}
+
 /**
  * Подсчитывает количество часов оставшихся до выполнения задачи
  * @param  string дата выполнения
