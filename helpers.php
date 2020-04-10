@@ -145,7 +145,7 @@ function include_template($name, array $data = []) {
 
 /**
  * Подсчитывает количество часов оставшихся до выполнения задачи
- * @param  string дата выполнения
+ * @param  string Дата выполнения
   * @return integer Количество часов
  */
 function count_hours($date) {
@@ -156,4 +156,59 @@ function count_hours($date) {
     }
 
     return 1000;
+}
+
+/**
+ * возвращает значение поля в форме
+ * @param  string Имя поля формы
+ * @return string Значение поля
+ */
+function getPostVal($name)
+{
+    return $_POST[$name] ?? "";
+}
+
+/**
+ * Проверка заполненности
+ * @param  string Имя поля формы
+ * @return string Текст ошибки
+ */
+function validateFilled($name) {
+    if (empty($_POST[$name])) {
+        return "Это поле должно быть заполнено";
+    }
+    return null;
+}
+
+/**
+ * Проверка длины
+ * @param  string Имя поля формы
+ * @param integer Минимальное значение
+ * @param integer Максимальное значение
+ * @return string Текст ошибки
+ */
+function isCorrectLength($name, $min, $max) {
+    $len = strlen($_POST[$name]);
+
+    if ($len < $min or $len > $max) {
+        return "Значение должно быть от $min до $max символов";
+    }
+    return null;
+}
+
+/**
+* Проверка даты
+* @param  string Имя поля формы
+* @return string Текст ошибки
+*/
+function isCorrectDate($name)
+{
+    $tm = $_POST[$name];
+    if (is_date_valid($tm)) {
+        $tm = $tm . " 23:59";
+        if (strtotime($tm) < time()) {
+            return "Значение не может быть меньше текущей";
+        }
+        return null;
+    }
 }

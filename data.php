@@ -18,14 +18,22 @@ function get_projects($id, $con) {
  * Получить список задач текущего пользователя
  * @param  integer $id_user Идентификатор текущего пользователя
  * @param  integer $id_project Идентификатор текущего проекта
+ * @param  integer $sort Номер поля для сортировки
+ * @param  string $direction Направление сортировки
  * @param  $con Идентификатор соединения с БД
  * @return Ассоциативный массив задач текущего пользователя
  */
-function get_tasks($id_user, $id_project, $con)
+function get_tasks($id_user, $id_project, $sort, $direction, $con)
 {
     $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = $id_user";
     if ($id_project) {
         $sql = $sql . " and tasks.id_project= $id_project";
+    }
+    if ($sort) {
+        $sql = $sql . " ORDER BY $sort";
+    }
+    if ($direction) {
+        $sql = $sql . " $direction";
     }
     $result = mysqli_query($con, $sql);
     if (!mysqli_num_rows($result)) {
@@ -36,13 +44,32 @@ function get_tasks($id_user, $id_project, $con)
 
 /**
  * Подсчитывает количество задач для проекта
- * @param  integer $id_project Идентификатор текущего проекта
+ * @param integer $id_project Идентификатор текущего проекта
  * @param $con Идентификатор соединения с БД
  * @return integer Количество задач
  */
 function count_tasks($id_project, $con) {
- //   $con = mysqli_connect("localhost", "root", "", "doings_done");
     $sql = "SELECT * FROM tasks WHERE tasks.id_project = $id_project";
     $result = mysqli_query($con, $sql);
     return mysqli_num_rows($result);
+}
+/**
+ * Добавление задачи в базу данных
+ * @param string $name_task Название задачи
+ * @param integer $id_project Идентификатор проекта
+ * @param string $date Дата завершения
+ * @param string $file Ссылка на файл
+ * @param $con Идентификатор соединения с БД
+ * @return integer Количество задач
+ */
+function write_task($name_task, $id_project, $date, $file, $con) {
+    $sql = "INSERT INTO tasks SET name_task = '$name_task', id_project = $id_project";
+    if (!is_null($date) and !empty($date)) {
+        $sql = $sql . ", date_of_completion = '$date'";
+    }
+    if (!is_null($file) and !empty($file)) {
+        $sql = $sql . ", file = '$file'";
+    }
+    //print($sql);
+    $result = mysqli_query($con, $sql);
 }
