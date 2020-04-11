@@ -53,6 +53,7 @@ function count_tasks($id_project, $con) {
     $result = mysqli_query($con, $sql);
     return mysqli_num_rows($result);
 }
+
 /**
  * Добавление задачи в базу данных
  * @param string $name_task Название задачи
@@ -70,6 +71,42 @@ function write_task($name_task, $id_project, $date, $file, $con) {
     if (!is_null($file) and !empty($file)) {
         $sql = $sql . ", file = '$file'";
     }
+    $result = mysqli_query($con, $sql);
+}
+
+/**
+ * Проверка уникальности email
+ * @param string $email email пользователя
+ * @param $con Идентификатор соединения с БД
+ * @return integer количество найденных записей
+ */
+function count_email($email, $con) {
+    $sql = "SELECT * FROM users WHERE email = '$email'";
     //print($sql);
+    $result = mysqli_query($con, $sql);
+    return mysqli_num_rows($result);
+}
+/**
+ * Проверка уникальности e-mail
+ * @param  string Имя поля формы
+ * @param $con Идентификатор соединения с БД
+ * @return string Текст ошибки
+ */
+function unique_email($name, $con) {
+    if (count_email($_POST['email'], $con)) {
+        return "Такой E-mail уже зарегистрирован";
+    }
+    return null;
+}
+/**
+ * Добавление задачи в базу данных
+ * @param string $name Имя пользователя
+ * @param string $email email
+ * @param string $password Пароль
+ * @param $con Идентификатор соединения с БД
+ * @return integer Количество задач
+ */
+function write_user($name, $email, $password, $con) {
+    $sql = "INSERT INTO users SET name = '$name', email = '$email',password = '$password'";
     $result = mysqli_query($con, $sql);
 }

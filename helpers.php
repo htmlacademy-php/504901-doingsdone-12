@@ -209,6 +209,19 @@ function isCorrectDate($name)
         if (strtotime($tm) < time()) {
             return "Значение не может быть меньше текущей";
         }
-        return null;
     }
+    return null;
 }
+/**
+ * Проверка корректности e-mail
+ * @param  string Имя поля формы
+ * @return string Текст ошибки
+ */
+function validate_email($name) {
+    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        return "E-mail введён некорректно";
+    }
+    return null;
+}
+
+
