@@ -5,17 +5,17 @@ require_once('init.php');
 $errors = [];
 $rules = [
     'email' => function() {
-        $empty = validateFilled('email');
+        $empty = validateFilled($_POST['email']);
         if ($empty) {
             return $empty;
         }
-        return validate_email('email');
+        return validate_email($_POST['email']);
     },
     'password' => function() {
-        return validateFilled('password');
+        return validateFilled($_POST['password']);
     },
     'name' => function() {
-        return validateFilled('name');
+        return validateFilled($_POST['name']);
     }
 ];
 
@@ -39,8 +39,6 @@ if (isset($_POST['add_user'])) {
     }
 }
 $page_content = include_template('new_user.php', [
-       /* 'projects' => get_projects($current_user, $con),
-        'show_complete_tasks' => $show_complete_tasks,*/
         'con' => $con,
         'errors' => $errors
     ]

@@ -5,10 +5,10 @@ require_once('init.php');
 $errors = [];
 $rules = [
     'name' => function() {
-        return validateFilled('name');
+        return validateFilled($_POST['name']);
     },
     'date' => function() {
-        return isCorrectDate('date');
+        return isCorrectDate($_POST['date']);
     }
 ];
 
