@@ -174,7 +174,7 @@ function getPostVal($name)
  * @return string Текст ошибки
  */
 function validateFilled($name) {
-    if (empty($_POST[$name])) {
+    if (empty($name)) {
         return "Это поле должно быть заполнено";
     }
     return null;
@@ -188,7 +188,7 @@ function validateFilled($name) {
  * @return string Текст ошибки
  */
 function isCorrectLength($name, $min, $max) {
-    $len = strlen($_POST[$name]);
+    $len = strlen($name);
 
     if ($len < $min or $len > $max) {
         return "Значение должно быть от $min до $max символов";
@@ -203,12 +203,24 @@ function isCorrectLength($name, $min, $max) {
 */
 function isCorrectDate($name)
 {
-    $tm = $_POST[$name];
-    if (is_date_valid($tm)) {
-        $tm = $tm . " 23:59";
-        if (strtotime($tm) < time()) {
+    if (is_date_valid($name)) {
+        $name = $name . " 23:59";
+        if (strtotime($name) < time()) {
             return "Значение не может быть меньше текущей";
         }
-        return null;
     }
+    return null;
 }
+/**
+ * Проверка корректности e-mail
+ * @param  string Имя поля формы
+ * @return string Текст ошибки
+ */
+function validate_email($name) {
+    if (!filter_var($name, FILTER_VALIDATE_EMAIL)) {
+        return "E-mail введён некорректно";
+    }
+    return null;
+}
+
+
