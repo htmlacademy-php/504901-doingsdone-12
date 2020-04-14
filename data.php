@@ -1,7 +1,6 @@
 <?php
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
-$current_user = 1;
 
 /**
  * Получить список проектов текущего пользователя
@@ -104,9 +103,22 @@ function unique_email($name, $con) {
  * @param string $email email
  * @param string $password Пароль
  * @param $con Идентификатор соединения с БД
- * @return integer Количество задач
  */
 function write_user($name, $email, $password, $con) {
     $sql = "INSERT INTO users SET name = '$name', email = '$email',password = '$password'";
     $result = mysqli_query($con, $sql);
+}
+
+/**
+ * Проверка зарегистрированного пользователя
+ * @param string $email email пользователя
+ * @param string $password hash пароля
+ * @param $con Идентификатор соединения с БД
+ * @return Ассоциативный массив данных пользователя
+ */
+function read_user($email, $con) {
+    $sql = "SELECT * FROM users WHERE email = '$email'";
+    //print($sql);
+    $result = mysqli_query($con, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }

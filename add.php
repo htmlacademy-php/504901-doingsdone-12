@@ -2,6 +2,11 @@
 require_once('helpers.php');
 require_once('data.php');
 require_once('init.php');
+session_start();
+$user = [];
+if (isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+}
 $errors = [];
 $rules = [
     'name' => function() {
@@ -43,6 +48,6 @@ $page_content = include_template('new_task.php', [
     'errors' => $errors
     ]
  );
-$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Добавление задачи']);
+$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Добавление задачи' , 'user' => $user]);
 
 print($layout_content);
