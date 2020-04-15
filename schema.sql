@@ -24,3 +24,4 @@ CREATE TABLE tasks (
     FOREIGN KEY (id_project) REFERENCES projects (id_project)
  );
 CREATE INDEX name_task ON tasks(name_task);
+CREATE FULLTEXT INDEX name_search ON tasks(name_task);

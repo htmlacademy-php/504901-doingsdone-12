@@ -22,10 +22,10 @@
 <main class="content__main">
     <h2 class="content__main-heading">Список задач</h2>
 
-    <form class="search-form" action="index.php" method="post" autocomplete="off">
-        <input class="search-form__input" type="text" name="" value="" placeholder="Поиск по задачам">
+    <form class="search-form" action="index.php" method="get" autocomplete="off">
+        <input class="search-form__input" type="text" name="text" value="" placeholder="Поиск по задачам">
 
-        <input class="search-form__submit" type="submit" name="" value="Искать">
+        <input class="search-form__submit" type="submit" name="search" value="Искать">
     </form>
 
     <div class="tasks-controls">
@@ -43,27 +43,30 @@
             <span class="checkbox__text">Показывать выполненные</span>
         </label>
     </div>
-
-    <table class="tasks">
-        <?php foreach ($tasks as $key => $value): ?>
-            <?php if ($show_complete_tasks === 1 or !$value['status']): ?>
-                <tr class="tasks__item task <?php if ($value['status']): ?>task--completed<?php endif; ?>
-                <?php if (count_hours($value['date_of_completion'])<=24 && !$value['status']): ?>task--important<?php endif; ?>">
-                    <td class="task__select">
-                        <label class="checkbox task__checkbox">
-                            <input class="checkbox__input visually-hidden" type="checkbox">
-                            <span class="checkbox__text"><?=htmlspecialchars($value['name_task']); ?></span>
-                        </label>
-                    </td>
-                    <td class="task__file">
-                        <?php if ($value['file']): ?>
-                             <a class="download-link" href="<?='/uploads/'.$value['file']; ?>"><?=$value['file']; ?></a>
-                        <?php endif; ?>
-                    </td>
-                    <td class="task__date"><?=$value['date_of_completion']; ?></td>
-                    <td class="task__controls"><?=$value['name']; ?></td>
-                </tr>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    </table>
+    <?php if ($search and !count($tasks)): ?>
+            <p>Ничего не найдено по вашему запросу</p>
+    <?php else: ?>
+       <table class="tasks">
+            <?php foreach ($tasks as $key => $value): ?>
+                <?php if ($show_complete_tasks === 1 or !$value['status']): ?>
+                    <tr class="tasks__item task <?php if ($value['status']): ?>task--completed<?php endif; ?>
+                    <?php if (count_hours($value['date_of_completion'])<=24 && !$value['status']): ?>task--important<?php endif; ?>">
+                        <td class="task__select">
+                            <label class="checkbox task__checkbox">
+                                <input class="checkbox__input visually-hidden" type="checkbox">
+                                <span class="checkbox__text"><?=htmlspecialchars($value['name_task']); ?></span>
+                            </label>
+                        </td>
+                        <td class="task__file">
+                            <?php if ($value['file']): ?>
+                                 <a class="download-link" href="<?='/uploads/'.$value['file']; ?>"><?=$value['file']; ?></a>
+                            <?php endif; ?>
+                        </td>
+                        <td class="task__date"><?=$value['date_of_completion']; ?></td>
+                        <td class="task__controls"><?=$value['name']; ?></td>
+                    </tr>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
 </main>
