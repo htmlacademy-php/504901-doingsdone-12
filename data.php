@@ -122,3 +122,20 @@ function read_user($email, $con) {
     $result = mysqli_query($con, $sql);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
+/**
+ * Поиск задач
+ * @param string $text Текст для поиска
+ * @param integer $id_user id пользователя
+ * @param $con Идентификатор соединения с БД
+ * @return Ассоциативный массив найденных данных
+ */
+function search_tasks($text, $id_user, $con) {
+    $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = $id_user";
+    if ($text) {
+        $sql = $sql .  " and MATCH(name_task) AGAINST('$text')";
+    }
+     //print($sql);
+    $result = mysqli_query($con, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
