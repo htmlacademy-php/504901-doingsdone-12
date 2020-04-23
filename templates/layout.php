@@ -20,7 +20,7 @@
             </a>
             <div class="main-header__side">
                 <?php if(isset($user['id'])):?>
-                <a class="main-header__side-item button button--plus" href="form-task.html">Добавить задачу</a>
+                <a class="main-header__side-item button button--plus" href="add.php">Добавить задачу</a>
 
                 <div class="main-header__side-item user-menu">
                     <div class="user-menu__data">
@@ -49,7 +49,7 @@
             <p>Веб-приложение для удобного ведения списка дел.</p>
         </div>
         <?php if (count($user)):?>
-            <a class="main-footer__button button button--plus" href="pages/form-task.html">Добавить задачу</a>
+            <a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>
         <?php endif; ?>
         <div class="main-footer__social social">
             <span class="visually-hidden">Мы в соцсетях:</span>

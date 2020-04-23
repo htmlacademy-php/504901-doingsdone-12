@@ -27,7 +27,7 @@ if (isset($_POST['add_user'])) {
         }
     }
     if(!isset($errors['email'])) {
-        $errors['email'] = unique_email('email', $con);
+        $errors['email'] = unique_email($_POST['email'], $con);
     }
     $errors = array_filter($errors);
     if (!count($errors)) {

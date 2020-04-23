@@ -16,7 +16,7 @@
     </nav>
 
     <a class="button button--transparent button--plus content__side-button"
-       href="pages/form-project.html" target="project_add">Добавить проект</a>
+       href="add_project.php" target="project_add">Добавить проект</a>
 </section>
 
 <main class="content__main">
@@ -30,17 +30,17 @@
 
     <div class="tasks-controls">
         <nav class="tasks-switch">
-            <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-            <a href="/" class="tasks-switch__item">Повестка дня</a>
-            <a href="/" class="tasks-switch__item">Завтра</a>
-            <a href="/" class="tasks-switch__item">Просроченные</a>
+            <a href="/?f=all" class="tasks-switch__item <?php if ($filter === 'all') :?>tasks-switch__item--active<?php endif; ?>">Все задачи</a>
+            <a href="/?f=now" class="tasks-switch__item <?php if ($filter === 'now') :?>tasks-switch__item--active<?php endif; ?>">Повестка дня</a>
+            <a href="/?f=tomorrow" class="tasks-switch__item <?php if ($filter === 'tomorrow') :?>tasks-switch__item--active<?php endif; ?>">Завтра</a>
+            <a href="/?f=overdue" class="tasks-switch__item <?php if ($filter === 'overdue') :?>tasks-switch__item--active<?php endif; ?>">Просроченные</a>
         </nav>
-
         <label class="checkbox">
             <!--добавить сюда атрибут "checked", если переменная $show_complete_tasks равна единице-->
             <input class="checkbox__input visually-hidden show_completed" type="checkbox"
                    <?php if ($show_complete_tasks === 1): ?>checked<?php endif; ?>>
             <span class="checkbox__text">Показывать выполненные</span>
+
         </label>
     </div>
     <?php if ($search and !count($tasks)): ?>
@@ -53,7 +53,7 @@
                     <?php if (count_hours($value['date_of_completion'])<=24 && !$value['status']): ?>task--important<?php endif; ?>">
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
-                                <input class="checkbox__input visually-hidden" type="checkbox">
+                                <input class="checkbox__input visually-hidden" type="checkbox" value="<?=($value['id_task']); ?>">
                                 <span class="checkbox__text"><?=htmlspecialchars($value['name_task']); ?></span>
                             </label>
                         </td>
