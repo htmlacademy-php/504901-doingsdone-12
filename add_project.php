@@ -9,15 +9,12 @@ if (isset($_SESSION['user_id'])) {
     $user = ['id' => $_SESSION['user_id'], 'name' => $_SESSION['user_name']];
     $errors = [];
     $rules = [
-        'name' => function () {
+        'name' => function() {
             return validateFilled($_POST['name']);
-        },
-        'date' => function () {
-            return isCorrectDate($_POST['date']);
         }
-    ];
+     ];
 
-    if (isset($_POST['add_task'])) {
+    if (isset($_POST['add_project'])) {
 
         foreach ($_POST as $key => $value) {
             if (isset($rules[$key])) {
@@ -25,30 +22,26 @@ if (isset($_SESSION['user_id'])) {
                 $errors[$key] = $rule();
             }
         }
-
+        if(!isset($errors['name'])) {
+            $errors['name'] = unique_project($_POST['name'], $con);
+        }
         $errors = array_filter($errors);
+
         if (!count($errors)) {
-            $name_task = htmlspecialchars($_POST['name']);
-            $id_project = $_POST['project'];
-            $date = $_POST['date'];
-            $filename = null;
-            if (isset($_FILES['file'])) {
-                $filename = $_FILES['file']['name'];
-                $file_path = __DIR__ . '/uploads/';
-                move_uploaded_file($_FILES['file']['tmp_name'], $file_path . $filename);
-            }
-            write_task($name_task, $id_project, $date, $filename, $con);
-            header("Location: /index.php?id=$id_project&&s=2&&d=desc");
+            $name = htmlspecialchars($_POST['name']);
+            $id_user = $user['id'];
+            $id_project= write_project($name, $id_user, $con);
+            header("Location: /index.php?id=$id_project");
         }
     }
-    $page_content = include_template('new_task.php', [
+    $page_content = include_template('new_project.php', [
             'projects' => get_projects($user['id'], $con),
             'show_complete_tasks' => $show_complete_tasks,
             'con' => $con,
             'errors' => $errors
         ]
     );
-    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Добавление задачи', 'user' => $user]);
+    $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Добавление проекта' , 'user' => $user]);
 } else {
     $page_content = include_template('guest.php', []);
     $layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Дела в порядке', 'user' => $user]);

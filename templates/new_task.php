@@ -1,3 +1,7 @@
+<?php if (!count($projects)) {
+   header("Location: /add_project.php");
+};
+?>
 <section class="content__side">
     <h2 class="content__side-heading">Проекты</h2>
 
@@ -14,9 +18,8 @@
         </ul>
     </nav>
 
-    <a class="button button--transparent button--plus content__side-button" href="form-project.html">Добавить проект</a>
+    <a class="button button--transparent button--plus content__side-button" href="add_project.php">Добавить проект</a>
 </section>
-
 <main class="content__main">
     <h2 class="content__main-heading">Добавление задачи</h2>
 

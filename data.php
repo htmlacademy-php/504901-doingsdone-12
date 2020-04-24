@@ -1,6 +1,6 @@
 <?php
 // показывать или нет выполненные задачи
-$show_complete_tasks = rand(0, 1);
+$show_complete_tasks = rand(0,1);
 
 /**
  * Получить список проектов текущего пользователя
@@ -19,14 +19,28 @@ function get_projects($id, $con) {
  * @param  integer $id_project Идентификатор текущего проекта
  * @param  integer $sort Номер поля для сортировки
  * @param  string $direction Направление сортировки
+ * @param  string $filter Фильтр
  * @param  $con Идентификатор соединения с БД
  * @return Ассоциативный массив задач текущего пользователя
  */
-function get_tasks($id_user, $id_project, $sort, $direction, $con)
+function get_tasks($id_user, $id_project, $sort, $direction, $filter, $con)
 {
     $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = $id_user";
     if ($id_project) {
         $sql = $sql . " and tasks.id_project= $id_project";
+    }
+    if ($filter == 'now') {
+        $dt = date('Y-m-d');
+        $sql = $sql . " and date_of_completion = '$dt'";
+    }
+    if ($filter == 'tomorrow') {
+        $dt = date('Y-m-d');
+        $dt = date('Y-m-d', strtotime($dt) + 24 * 3600);
+        $sql = $sql . " and date_of_completion = '$dt'";
+    }
+    if ($filter == 'overdue') {
+        $dt = date('Y-m-d');
+        $sql = $sql . " and date_of_completion < '$dt'";
     }
     if ($sort) {
         $sql = $sql . " ORDER BY $sort";
@@ -74,29 +88,36 @@ function write_task($name_task, $id_project, $date, $file, $con) {
 }
 
 /**
- * Проверка уникальности email
- * @param string $email email пользователя
- * @param $con Идентификатор соединения с БД
- * @return integer количество найденных записей
- */
-function count_email($email, $con) {
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    //print($sql);
-    $result = mysqli_query($con, $sql);
-    return mysqli_num_rows($result);
-}
-/**
  * Проверка уникальности e-mail
- * @param  string Имя поля формы
+ * @param  string $email email пользователя
  * @param $con Идентификатор соединения с БД
  * @return string Текст ошибки
  */
-function unique_email($name, $con) {
-    if (count_email($_POST['email'], $con)) {
+function unique_email($email, $con) {
+    $sql = "SELECT * FROM users WHERE email = '$email'";
+    //print($sql);
+    $result = mysqli_query($con, $sql);
+    if (mysqli_num_rows($result)) {
         return "Такой E-mail уже зарегистрирован";
     }
     return null;
 }
+
+/**
+ * Проверка уникальности названия проекта
+ * @param  string Название проекта
+ * @param $con Идентификатор соединения с БД
+ * @return string Текст ошибки
+ */
+function unique_project($name, $con) {
+    $sql = "SELECT * FROM projects WHERE name = '$name'";
+    $result = mysqli_query($con, $sql);
+    if (mysqli_num_rows($result)) {
+        return "Такой проект уже зарегистрирован";
+    }
+    return null;
+}
+
 /**
  * Добавление задачи в базу данных
  * @param string $name Имя пользователя
@@ -138,4 +159,27 @@ function search_tasks($text, $id_user, $con) {
      //print($sql);
     $result = mysqli_query($con, $sql);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Добавление проекта в базу данных
+ * @param string $name Название проекта
+ * @param integer $id_user Идентификатор пользователя
+ * @param $con Идентификатор соединения с БД
+ * @return Идентификатор добавленной записи
+ */
+function write_project($name, $id_user, $con) {
+    $sql = "INSERT INTO projects SET name = '$name', id_user = $id_user";
+    $result = mysqli_query($con, $sql);
+    return mysqli_insert_id($con);
+}
+
+/**
+ * Изменение статуса задачи
+ * @param integer $id_task Идентификатор задачи
+ * @param $con Идентификатор соединения с БД
+ */
+function change_status($id_task, $con) {
+    $sql = "UPDATE tasks SET status = 1 - status WHERE  id_task = $id_task";
+    $result = mysqli_query($con, $sql);
 }
