@@ -53,7 +53,9 @@
                     <?php if (count_hours($value['date_of_completion'])<=24 && !$value['status']): ?>task--important<?php endif; ?>">
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
-                                <input class="checkbox__input visually-hidden" type="checkbox" value="<?=($value['id_task']); ?>">
+                                <input class="checkbox__input visually-hidden" type="checkbox"
+                                       <?php if ($value['status'] == 1): ?>checked="checked"<?php endif; ?>
+                                       value="<?=($value['id_task']); ?>" >
                                 <span class="checkbox__text"><?=htmlspecialchars($value['name_task']); ?></span>
                             </label>
                         </td>
