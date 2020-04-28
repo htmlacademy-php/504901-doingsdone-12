@@ -183,3 +183,18 @@ function change_status($id_task, $con) {
     $sql = "UPDATE tasks SET status = 1 - status WHERE  id_task = $id_task";
     $result = mysqli_query($con, $sql);
 }
+
+/**
+ * Уведомления о предстоящих задачах
+ * @param $con Идентификатор соединения с БД
+ * @return Ассоциативный массив найденных данных
+ */
+function notifications($con)
+{
+    $sql = "SELECT name_task, date_of_completion, users.email as email, users.name as user_name FROM tasks";
+    $sql = $sql . " INNER JOIN projects on tasks.id_project = projects.id_project";
+    $sql = $sql . " INNER JOIN users ON projects.id_user = users.id_user";
+    $sql = $sql . " WHERE date_of_completion = CURRENT_DATE AND status = 0 ORDER BY projects.id_user";
+    $result = mysqli_query($con, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
