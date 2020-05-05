@@ -1,6 +1,4 @@
 <?php
-require_once('helpers.php');
-require_once('data.php');
 require_once('init.php');
 $errors = [];
 $rules = [
@@ -20,19 +18,14 @@ $rules = [
 ];
 
 if (isset($_POST['add_user'])) {
-    foreach ($_POST as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule();
-        }
-    }
+    validation_form($rules);
     if(!isset($errors['email'])) {
         $errors['email'] = unique_email($_POST['email'], $con);
     }
     $errors = array_filter($errors);
     if (!count($errors)) {
         $name = htmlspecialchars($_POST['name']);
-        $email = $_POST['email'];
+        $email = htmlspecialchars($_POST['email']);
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         write_user($name, $email, $password, $con);
         header("Location: /index.php?");

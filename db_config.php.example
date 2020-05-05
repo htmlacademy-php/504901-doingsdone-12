@@ -1,0 +1,7 @@
+<?php
+// Переименуйте файл в db_config.php и введите ваши данные для соединения с базой данных
+$db_host = 'host';
+$db_user = 'user';
+$db_pass = 'password';
+$db_name = 'bd_name';
+$con = mysqli_connect($db_host, $db_user, $db_pass, $db_name);

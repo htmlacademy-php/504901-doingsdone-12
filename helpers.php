@@ -145,8 +145,8 @@ function include_template($name, array $data = []) {
 
 /**
  * Подсчитывает количество часов оставшихся до выполнения задачи
- * @param  string Дата выполнения
-  * @return integer Количество часов
+ * @param  string $date Дата выполнения
+ * @return integer Количество часов
  */
 function count_hours($date) {
     if (isset($date)) {
@@ -160,7 +160,7 @@ function count_hours($date) {
 
 /**
  * возвращает значение поля в форме
- * @param  string Имя поля формы
+ * @param  string $name Имя поля формы
  * @return string Значение поля
  */
 function getPostVal($name)
@@ -170,7 +170,7 @@ function getPostVal($name)
 
 /**
  * Проверка заполненности
- * @param  string Имя поля формы
+ * @param  string $name Имя поля формы
  * @return string Текст ошибки
  */
 function validateFilled($name) {
@@ -182,9 +182,9 @@ function validateFilled($name) {
 
 /**
  * Проверка длины
- * @param  string Имя поля формы
- * @param integer Минимальное значение
- * @param integer Максимальное значение
+ * @param string $name Имя поля формы
+ * @param integer $min Минимальное значение
+ * @param integer $max Максимальное значение
  * @return string Текст ошибки
  */
 function isCorrectLength($name, $min, $max) {
@@ -198,7 +198,7 @@ function isCorrectLength($name, $min, $max) {
 
 /**
 * Проверка даты
-* @param  string Имя поля формы
+* @param  string $name Имя поля формы
 * @return string Текст ошибки
 */
 function isCorrectDate($name)
@@ -213,7 +213,7 @@ function isCorrectDate($name)
 }
 /**
  * Проверка корректности e-mail
- * @param  string Имя поля формы
+ * @param  string $name Имя поля формы
  * @return string Текст ошибки
  */
 function validate_email($name) {
@@ -222,5 +222,19 @@ function validate_email($name) {
     }
     return null;
 }
-
+/**
+ * Валидация полей формы
+ * @param  array $rules Правила валидации
+ * @return array Ассоциативный массив ошибок
+ */
+function validation_form($rules) {
+    $errors = [];
+    foreach ($_POST as $key => $value) {
+        if (isset($rules[$key])) {
+            $rule = $rules[$key];
+            $errors[$key] = $rule();
+        }
+    }
+    return $errors;
+}
 

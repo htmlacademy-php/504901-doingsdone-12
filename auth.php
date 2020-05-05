@@ -1,7 +1,4 @@
 <?php
-session_start();
-require_once('helpers.php');
-require_once('data.php');
 require_once('init.php');
 $user = [];
 $errors = [];
@@ -19,12 +16,7 @@ $rules = [
 ];
 
 if (isset($_POST['auth'])) {
-    foreach ($_POST as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule();
-        }
-    }
+    validation_form($rules);
     $errors = array_filter($errors);
     if (!count($errors)) {
         $email = $_POST['email'];
