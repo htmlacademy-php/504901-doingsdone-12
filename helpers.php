@@ -13,7 +13,8 @@
  *
  * @return bool true при совпадении с форматом 'ГГГГ-ММ-ДД', иначе false
  */
-function is_date_valid(string $date) : bool {
+function is_date_valid(string $date): bool
+{
     $format_to_check = 'Y-m-d';
     $dateTimeObj = date_create_from_format($format_to_check, $date);
 
@@ -29,7 +30,8 @@ function is_date_valid(string $date) : bool {
  *
  * @return mysqli_stmt Подготовленное выражение
  */
-function db_get_prepare_stmt($link, $sql, $data = []) {
+function db_get_prepare_stmt($link, $sql, $data = [])
+{
     $stmt = mysqli_prepare($link, $sql);
 
     if ($stmt === false) {
@@ -46,12 +48,14 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
 
             if (is_int($value)) {
                 $type = 'i';
-            }
-            else if (is_string($value)) {
-                $type = 's';
-            }
-            else if (is_double($value)) {
-                $type = 'd';
+            } else {
+                if (is_string($value)) {
+                    $type = 's';
+                } else {
+                    if (is_double($value)) {
+                        $type = 'd';
+                    }
+                }
             }
 
             if ($type) {
@@ -96,9 +100,9 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
  *
  * @return string Рассчитанная форма множественнго числа
  */
-function get_noun_plural_form (int $number, string $one, string $two, string $many): string
+function get_noun_plural_form(int $number, string $one, string $two, string $many): string
 {
-    $number = (int) $number;
+    $number = (int)$number;
     $mod10 = $number % 10;
     $mod100 = $number % 100;
 
@@ -126,7 +130,8 @@ function get_noun_plural_form (int $number, string $one, string $two, string $ma
  * @param array $data Ассоциативный массив с данными для шаблона
  * @return string Итоговый HTML
  */
-function include_template($name, array $data = []) {
+function include_template($name, array $data = [])
+{
     $name = 'templates/' . $name;
     $result = '';
 
@@ -145,13 +150,14 @@ function include_template($name, array $data = []) {
 
 /**
  * Подсчитывает количество часов оставшихся до выполнения задачи
- * @param  string $date Дата выполнения
+ * @param string $date Дата выполнения
  * @return integer Количество часов
  */
-function count_hours($date) {
+function count_hours($date)
+{
     if (isset($date)) {
         $now = date("d.m.y");
-        $diff = (strtotime($date) - strtotime($now))/3600;
+        $diff = (strtotime($date) - strtotime($now)) / 3600;
         return $diff;
     }
 
@@ -160,7 +166,7 @@ function count_hours($date) {
 
 /**
  * возвращает значение поля в форме
- * @param  string $name Имя поля формы
+ * @param string $name Имя поля формы
  * @return string Значение поля
  */
 function getPostVal($name)
@@ -170,10 +176,11 @@ function getPostVal($name)
 
 /**
  * Проверка заполненности
- * @param  string $name Имя поля формы
+ * @param string $name Имя поля формы
  * @return string Текст ошибки
  */
-function validateFilled($name) {
+function validateFilled($name)
+{
     if (empty($name)) {
         return "Это поле должно быть заполнено";
     }
@@ -187,7 +194,8 @@ function validateFilled($name) {
  * @param integer $max Максимальное значение
  * @return string Текст ошибки
  */
-function isCorrectLength($name, $min, $max) {
+function isCorrectLength($name, $min, $max)
+{
     $len = strlen($name);
 
     if ($len < $min or $len > $max) {
@@ -197,10 +205,10 @@ function isCorrectLength($name, $min, $max) {
 }
 
 /**
-* Проверка даты
-* @param  string $name Имя поля формы
-* @return string Текст ошибки
-*/
+ * Проверка даты
+ * @param string $name Имя поля формы
+ * @return string Текст ошибки
+ */
 function isCorrectDate($name)
 {
     if (is_date_valid($name)) {
@@ -211,23 +219,27 @@ function isCorrectDate($name)
     }
     return null;
 }
+
 /**
  * Проверка корректности e-mail
- * @param  string $name Имя поля формы
+ * @param string $name Имя поля формы
  * @return string Текст ошибки
  */
-function validate_email($name) {
+function validate_email($name)
+{
     if (!filter_var($name, FILTER_VALIDATE_EMAIL)) {
         return "E-mail введён некорректно";
     }
     return null;
 }
+
 /**
  * Валидация полей формы
- * @param  array $rules Правила валидации
+ * @param array $rules Правила валидации
  * @return array Ассоциативный массив ошибок
  */
-function validation_form($rules) {
+function validation_form($rules)
+{
     $errors = [];
     foreach ($_POST as $key => $value) {
         if (isset($rules[$key])) {

@@ -2,24 +2,24 @@
 require_once('init.php');
 $errors = [];
 $rules = [
-    'email' => function() {
+    'email' => function () {
         $empty = validateFilled($_POST['email']);
         if ($empty) {
             return $empty;
         }
         return validate_email($_POST['email']);
     },
-    'password' => function() {
+    'password' => function () {
         return validateFilled($_POST['password']);
     },
-    'name' => function() {
+    'name' => function () {
         return validateFilled($_POST['name']);
     }
 ];
 
 if (isset($_POST['add_user'])) {
-    validation_form($rules);
-    if(!isset($errors['email'])) {
+    $errors = validation_form($rules);
+    if (!isset($errors['email'])) {
         $errors['email'] = unique_email($_POST['email'], $con);
     }
     $errors = array_filter($errors);

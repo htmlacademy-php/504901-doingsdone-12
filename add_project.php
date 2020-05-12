@@ -1,7 +1,7 @@
 <?php
 require_once('init.php');
 $rules = [
-    'name' => function() {
+    'name' => function () {
         return validateFilled($_POST['name']);
     }
 ];

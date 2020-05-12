@@ -30,14 +30,14 @@ if ($count) {
             $previous['name_task'] = $previous['name_task'] . "\n"
                 . $current['name_task'];
         } else {
-            $text = "Уважаемый, " .$previous['user_name'] . ".  У вас запланирована задача \n".
-                $previous['name_task'] . " на ". $previous['date_of_completion'] . ".";
+            $text = "Уважаемый, " . $previous['user_name'] . ".  У вас запланирована задача \n" .
+                $previous['name_task'] . " на " . $previous['date_of_completion'] . ".";
             send_message($previous['email'], $text, $transport, $sender, $username);
             $previous = $current;
         }
     }
-    $text = "Уважаемый, " .$previous['user_name'] . ".  У вас запланирована задача \n".
-        $previous['name_task'] . " на ". $previous['date_of_completion'] . ".";
+    $text = "Уважаемый, " . $previous['user_name'] . ".  У вас запланирована задача \n" .
+        $previous['name_task'] . " на " . $previous['date_of_completion'] . ".";
     send_message($previous['email'], $text, $transport, $sender, $username);
 }
 

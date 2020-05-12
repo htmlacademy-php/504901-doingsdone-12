@@ -3,20 +3,20 @@ require_once('init.php');
 $user = [];
 $errors = [];
 $rules = [
-    'email' => function() {
+    'email' => function () {
         $empty = validateFilled($_POST['email']);
         if ($empty) {
             return $empty;
         }
         return validate_email($_POST['email']);
     },
-    'password' => function() {
+    'password' => function () {
         return validateFilled($_POST['password']);
     }
 ];
 
 if (isset($_POST['auth'])) {
-    validation_form($rules);
+    $errors = validation_form($rules);
     $errors = array_filter($errors);
     if (!count($errors)) {
         $email = $_POST['email'];
@@ -30,13 +30,14 @@ if (isset($_POST['auth'])) {
             }
         }
         $errors['auth'] = "Неверный email или пароль";
-     }
+    }
 }
 $page_content = include_template('auth.php', [
         'con' => $con,
         'errors' => $errors
     ]
 );
-$layout_content = include_template('layout.php', ['content' => $page_content, 'title' => 'Регистрация' , 'user' => $user]);
+$layout_content = include_template('layout.php',
+    ['content' => $page_content, 'title' => 'Регистрация', 'user' => $user]);
 
 print($layout_content);
