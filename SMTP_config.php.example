@@ -1,0 +1,19 @@
+<?php
+/**
+* Переименуйте файл в SMTP_config.php и введите ваши параметры подключения к почтовому серверу
+•	Имя пользователя: $username;
+•	Отправитель: $sender;
+•	Пароль: $password;
+•	SMTP сервер: $host;
+•	Порт: $port;
+•	Шифрование: нет.
+*/
+$username = 'user@user.ru';
+$host = 'smtp.phpdemo.ru';
+$port = 25;
+$password = 'password';
+$sender =  'sender@sender.ru';
+$transport = (new Swift_SmtpTransport($host, $port))
+    ->setUsername($username)
+    ->setPassword($password);
+

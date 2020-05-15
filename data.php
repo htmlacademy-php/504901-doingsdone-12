@@ -1,44 +1,49 @@
 <?php
 // показывать или нет выполненные задачи
-$show_complete_tasks = rand(0,1);
+$show_complete_tasks = rand(0, 1);
 
 /**
  * Получить список проектов текущего пользователя
- * @param  integer $id Идентификатор текущего пользователя
- * @param  $con Идентификатор соединения с БД
- * @return Ассоциативный массив проектов текущего пользователя
+ * @param integer $id Идентификатор текущего пользователя
+ * @param object $con Идентификатор соединения с БД
+ * @return array Ассоциативный массив проектов текущего пользователя
  */
-function get_projects($id, $con) {
-    $sql = "SELECT * FROM projects WHERE id_user = $id";
-    $result = mysqli_query($con, $sql);
+function get_projects($id, $con)
+{
+    $sql = "SELECT * FROM projects WHERE id_user = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
 /**
  * Получить список задач текущего пользователя
- * @param  integer $id_user Идентификатор текущего пользователя
- * @param  integer $id_project Идентификатор текущего проекта
- * @param  integer $sort Номер поля для сортировки
- * @param  string $direction Направление сортировки
- * @param  string $filter Фильтр
- * @param  $con Идентификатор соединения с БД
- * @return Ассоциативный массив задач текущего пользователя
+ * @param integer $id_user Идентификатор текущего пользователя
+ * @param integer $id_project Идентификатор текущего проекта
+ * @param integer $sort Номер поля для сортировки
+ * @param string $direction Направление сортировки
+ * @param string $filter Фильтр
+ * @param object $con Идентификатор соединения с БД
+ * @return array Ассоциативный массив задач текущего пользователя
  */
 function get_tasks($id_user, $id_project, $sort, $direction, $filter, $con)
 {
-    $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = $id_user";
+    $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = ?";
     if ($id_project) {
         $sql = $sql . " and tasks.id_project= $id_project";
     }
-    if ($filter == 'now') {
+    if ($filter === 'now') {
         $dt = date('Y-m-d');
         $sql = $sql . " and date_of_completion = '$dt'";
     }
-    if ($filter == 'tomorrow') {
+    if ($filter === 'tomorrow') {
         $dt = date('Y-m-d');
         $dt = date('Y-m-d', strtotime($dt) + 24 * 3600);
         $sql = $sql . " and date_of_completion = '$dt'";
     }
-    if ($filter == 'overdue') {
+    if ($filter === 'overdue') {
         $dt = date('Y-m-d');
         $sql = $sql . " and date_of_completion < '$dt'";
     }
@@ -48,7 +53,10 @@ function get_tasks($id_user, $id_project, $sort, $direction, $filter, $con)
     if ($direction) {
         $sql = $sql . " $direction";
     }
-    $result = mysqli_query($con, $sql);
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_user);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     if (!mysqli_num_rows($result)) {
         http_response_code(404);
     }
@@ -58,12 +66,16 @@ function get_tasks($id_user, $id_project, $sort, $direction, $filter, $con)
 /**
  * Подсчитывает количество задач для проекта
  * @param integer $id_project Идентификатор текущего проекта
- * @param $con Идентификатор соединения с БД
+ * @param object $con Идентификатор соединения с БД
  * @return integer Количество задач
  */
-function count_tasks($id_project, $con) {
-    $sql = "SELECT * FROM tasks WHERE tasks.id_project = $id_project";
-    $result = mysqli_query($con, $sql);
+function count_tasks($id_project, $con)
+{
+    $sql = "SELECT * FROM tasks WHERE tasks.id_project = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_project);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     return mysqli_num_rows($result);
 }
 
@@ -73,30 +85,35 @@ function count_tasks($id_project, $con) {
  * @param integer $id_project Идентификатор проекта
  * @param string $date Дата завершения
  * @param string $file Ссылка на файл
- * @param $con Идентификатор соединения с БД
- * @return integer Количество задач
+ * @param object $con Идентификатор соединения с БД
  */
-function write_task($name_task, $id_project, $date, $file, $con) {
-    $sql = "INSERT INTO tasks SET name_task = '$name_task', id_project = $id_project";
+function write_task($name_task, $id_project, $date, $file, $con)
+{
+    $sql = "INSERT INTO tasks SET name_task = ?, id_project = ?";
     if (!is_null($date) and !empty($date)) {
         $sql = $sql . ", date_of_completion = '$date'";
     }
     if (!is_null($file) and !empty($file)) {
         $sql = $sql . ", file = '$file'";
     }
-    $result = mysqli_query($con, $sql);
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'si', $name_task, $id_project);
+    mysqli_stmt_execute($stmt);
 }
 
 /**
  * Проверка уникальности e-mail
- * @param  string $email email пользователя
- * @param $con Идентификатор соединения с БД
+ * @param string $email email пользователя
+ * @param object $con Идентификатор соединения с БД
  * @return string Текст ошибки
  */
-function unique_email($email, $con) {
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    //print($sql);
-    $result = mysqli_query($con, $sql);
+function unique_email($email, $con)
+{
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result)) {
         return "Такой E-mail уже зарегистрирован";
     }
@@ -105,13 +122,17 @@ function unique_email($email, $con) {
 
 /**
  * Проверка уникальности названия проекта
- * @param  string Название проекта
- * @param $con Идентификатор соединения с БД
+ * @param string Название проекта
+ * @param object $con Идентификатор соединения с БД
  * @return string Текст ошибки
  */
-function unique_project($name, $con) {
-    $sql = "SELECT * FROM projects WHERE name = '$name'";
-    $result = mysqli_query($con, $sql);
+function unique_project($name, $con)
+{
+    $sql = "SELECT * FROM projects WHERE name = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $name);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result)) {
         return "Такой проект уже зарегистрирован";
     }
@@ -119,28 +140,33 @@ function unique_project($name, $con) {
 }
 
 /**
- * Добавление задачи в базу данных
+ * Добавление пользователя в базу данных
  * @param string $name Имя пользователя
  * @param string $email email
- * @param string $password Пароль
- * @param $con Идентификатор соединения с БД
+ * @param string $password
+ * @param object $con Идентификатор соединения с БД
  */
-function write_user($name, $email, $password, $con) {
-    $sql = "INSERT INTO users SET name = '$name', email = '$email',password = '$password'";
-    $result = mysqli_query($con, $sql);
+function write_user($name, $email, $password, $con)
+{
+    $sql = "INSERT INTO users SET name = ?, email = ?, password = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'sss', $name, $email, $password);
+    mysqli_stmt_execute($stmt);
 }
 
 /**
  * Проверка зарегистрированного пользователя
  * @param string $email email пользователя
- * @param string $password hash пароля
- * @param $con Идентификатор соединения с БД
- * @return Ассоциативный массив данных пользователя
+ * @param object $con Идентификатор соединения с БД
+ * @return array Ассоциативный массив данных пользователя
  */
-function read_user($email, $con) {
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    //print($sql);
-    $result = mysqli_query($con, $sql);
+function read_user($email, $con)
+{
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
@@ -148,16 +174,19 @@ function read_user($email, $con) {
  * Поиск задач
  * @param string $text Текст для поиска
  * @param integer $id_user id пользователя
- * @param $con Идентификатор соединения с БД
- * @return Ассоциативный массив найденных данных
+ * @param object $con Идентификатор соединения с БД
+ * @return array Ассоциативный массив найденных данных
  */
-function search_tasks($text, $id_user, $con) {
-    $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = $id_user";
+function search_tasks($text, $id_user, $con)
+{
+    $sql = "SELECT *, name, id_user FROM tasks JOIN projects ON tasks.id_project = projects.id_project WHERE id_user = ?";
     if ($text) {
-        $sql = $sql .  " and MATCH(name_task) AGAINST('$text')";
+        $sql = $sql . " and MATCH(name_task) AGAINST('$text')";
     }
-     //print($sql);
-    $result = mysqli_query($con, $sql);
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_user);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
@@ -165,29 +194,35 @@ function search_tasks($text, $id_user, $con) {
  * Добавление проекта в базу данных
  * @param string $name Название проекта
  * @param integer $id_user Идентификатор пользователя
- * @param $con Идентификатор соединения с БД
- * @return Идентификатор добавленной записи
+ * @param object $con Идентификатор соединения с БД
+ * @return integer Идентификатор добавленной записи
  */
-function write_project($name, $id_user, $con) {
-    $sql = "INSERT INTO projects SET name = '$name', id_user = $id_user";
-    $result = mysqli_query($con, $sql);
+function write_project($name, $id_user, $con)
+{
+    $sql = "INSERT INTO projects SET name = ?, id_user = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'si', $name, $id_user);
+    mysqli_stmt_execute($stmt);
     return mysqli_insert_id($con);
 }
 
 /**
  * Изменение статуса задачи
  * @param integer $id_task Идентификатор задачи
- * @param $con Идентификатор соединения с БД
+ * @param object $con Идентификатор соединения с БД
  */
-function change_status($id_task, $con) {
-    $sql = "UPDATE tasks SET status = 1 - status WHERE  id_task = $id_task";
-    $result = mysqli_query($con, $sql);
+function change_status($id_task, $con)
+{
+    $sql = "UPDATE tasks SET status = 1 - status WHERE  id_task = ?";
+    $stmt = mysqli_prepare($con, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $id_task);
+    mysqli_stmt_execute($stmt);
 }
 
 /**
  * Уведомления о предстоящих задачах
- * @param $con Идентификатор соединения с БД
- * @return Ассоциативный массив найденных данных
+ * @param object $con Идентификатор соединения с БД
+ * @return array Ассоциативный массив найденных данных
  */
 function notifications($con)
 {
@@ -197,4 +232,93 @@ function notifications($con)
     $sql = $sql . " WHERE date_of_completion = CURRENT_DATE AND status = 0 ORDER BY projects.id_user";
     $result = mysqli_query($con, $sql);
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Вывод страницы добавления новой задачи
+ * @param array $rules Правила валидации
+ * @param object $con Идентификатор соединения с БД
+ * @param integer $show_complete_tasks Значение флага показ завершенных задач
+ * @return string Разметка страницы
+ */
+function add_task($rules, $con, $show_complete_tasks)
+{
+    $user = ['id' => $_SESSION['user_id'], 'name' => $_SESSION['user_name']];
+    $errors = [];
+    if (isset($_POST['add_task'])) {
+        $errors = validation_form($rules);
+        $errors = array_filter($errors);
+        if (!count($errors)) {
+            $name_task = htmlspecialchars($_POST['name']);
+            $id_project = htmlspecialchars($_POST['project']);
+            $date = htmlspecialchars($_POST['date']);
+            $filename = null;
+            if (isset($_FILES['file'])) {
+                $filename = $_FILES['file']['name'];
+                $file_path = __DIR__ . '/uploads/';
+                if (!file_exists($file_path)) {
+                    mkdir($file_path);
+                }
+                move_uploaded_file($_FILES['file']['tmp_name'], $file_path . $filename);
+            }
+            write_task($name_task, $id_project, $date, $filename, $con);
+            header("Location: /index.php?id=$id_project&s=2&d=desc");
+        }
+    }
+    $page_content = include_template('new_task.php', [
+            'projects' => get_projects($user['id'], $con),
+            'show_complete_tasks' => $show_complete_tasks,
+            'con' => $con,
+            'errors' => $errors
+        ]
+    );
+    return include_template('layout.php',
+        ['content' => $page_content, 'title' => 'Добавление задачи', 'user' => $user]);
+}
+
+/**
+ * Перенаправление на страницу гостя
+ * @return string Разметка страницы гостя
+ */
+function redirect()
+{
+    $page_content = include_template('guest.php', []);
+    return include_template('layout.php', ['content' => $page_content, 'title' => 'Дела в порядке', 'user' => []]);
+}
+
+/**
+ * Вывод страницы добавления нового проекта
+ * @param array $rules Правила валидации
+ * @param object $con Идентификатор соединения с БД
+ * @param integer $show_complete_tasks Значение флага показ завершенных задач
+ * @return string разметка страницы
+ */
+function project_add($rules, $con, $show_complete_tasks)
+{
+    $user = ['id' => $_SESSION['user_id'], 'name' => $_SESSION['user_name']];
+    $errors = [];
+
+    if (isset($_POST['add_project'])) {
+        $errors = validation_form($rules);
+        if (!isset($errors['name'])) {
+            $errors['name'] = unique_project($_POST['name'], $con);
+        }
+        $errors = array_filter($errors);
+
+        if (!count($errors)) {
+            $name = htmlspecialchars($_POST['name']);
+            $id_user = $user['id'];
+            $id_project = write_project($name, $id_user, $con);
+            header("Location: /index.php?id=$id_project");
+        }
+    }
+    $page_content = include_template('new_project.php', [
+            'projects' => get_projects($user['id'], $con),
+            'show_complete_tasks' => $show_complete_tasks,
+            'con' => $con,
+            'errors' => $errors
+        ]
+    );
+    return include_template('layout.php',
+        ['content' => $page_content, 'title' => 'Добавление проекта', 'user' => $user]);
 }

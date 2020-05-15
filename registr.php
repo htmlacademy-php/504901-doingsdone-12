@@ -1,38 +1,35 @@
 <?php
-require_once('helpers.php');
-require_once('data.php');
 require_once('init.php');
 $errors = [];
 $rules = [
-    'email' => function() {
+    'email' => function () {
         $empty = validateFilled($_POST['email']);
         if ($empty) {
             return $empty;
         }
         return validate_email($_POST['email']);
     },
-    'password' => function() {
+    'password' => function () {
         return validateFilled($_POST['password']);
     },
-    'name' => function() {
-        return validateFilled($_POST['name']);
+    'name' => function () {
+        $empty = validateFilled($_POST['name']);
+        if ($empty) {
+            return $empty;
+        }
+        return isCorrectLength($_POST['name'], 1, 30);
     }
 ];
 
 if (isset($_POST['add_user'])) {
-    foreach ($_POST as $key => $value) {
-        if (isset($rules[$key])) {
-            $rule = $rules[$key];
-            $errors[$key] = $rule();
-        }
-    }
-    if(!isset($errors['email'])) {
+    $errors = validation_form($rules);
+    if (!isset($errors['email'])) {
         $errors['email'] = unique_email($_POST['email'], $con);
     }
     $errors = array_filter($errors);
     if (!count($errors)) {
         $name = htmlspecialchars($_POST['name']);
-        $email = $_POST['email'];
+        $email = htmlspecialchars($_POST['email']);
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         write_user($name, $email, $password, $con);
         header("Location: /index.php?");
