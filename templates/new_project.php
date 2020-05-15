@@ -1,23 +1,10 @@
-<section class="content__side">
-    <h2 class="content__side-heading">Проекты</h2>
-
-    <nav class="main-navigation">
-        <ul class="main-navigation__list">
-            <?php foreach ($projects as $value): ?>
-                <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link"
-                       href="/?id=<?= $value['id_project']; ?>">
-                        <?= htmlspecialchars($value['name']); ?></a>
-                    <span class="main-navigation__list-item-count"><?= count_tasks($value['id_project'],
-                            $con); ?></span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
-
-    <a class="button button--transparent button--plus content__side-button" href="add_project.php">Добавить проект</a>
-</section>
-
+<?php
+print(include_template('nav_menu.php', [
+    'projects' => get_projects($_SESSION['user_id'], $con),
+    'id_project' => $_GET['id'] ?? '',
+    'con' => $con
+]));
+?>
 <main class="content__main">
     <h2 class="content__main-heading">Добавление проекта</h2>
 
@@ -28,7 +15,7 @@
 
             <input class="form__input <?= $classname; ?>" type="text" name="name" id="project_name" value=""
                    placeholder="Введите название проекта">
-            <span class="error_text"><?= $errors['name'] ?? ""; ?></span>
+            <p class="form__message"><?= $errors['name'] ?? ""; ?></p>
         </div>
 
         <div class="form__row form__row--controls">

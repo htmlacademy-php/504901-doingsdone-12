@@ -1,25 +1,10 @@
-<section class="content__side">
-    <h2 class="content__side-heading">Проекты</h2>
-
-    <nav class="main-navigation">
-        <ul class="main-navigation__list">
-            <?php foreach ($projects as $value): ?>
-                <li class="main-navigation__list-item">
-                    <a class="main-navigation__list-item-link
-                    <?php if ($id_project === strval($value['id_project'])): ?>main-navigation__list-item--active <?php endif; ?>"
-                       href="/?id=<?= $value['id_project']; ?>">
-                        <?= htmlspecialchars($value['name']); ?></a>
-                    <span class="main-navigation__list-item-count"><?= count_tasks($value['id_project'],
-                            $con); ?></span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
-
-    <a class="button button--transparent button--plus content__side-button"
-       href="add_project.php" target="project_add">Добавить проект</a>
-</section>
-
+<?php
+print(include_template('nav_menu.php', [
+    'projects' => get_projects($_SESSION['user_id'], $con),
+    'id_project' => $_GET['id'] ?? '',
+    'con' => $con
+]));
+?>
 <main class="content__main">
     <h2 class="content__main-heading">Список задач</h2>
 
@@ -31,7 +16,7 @@
 
     <div class="tasks-controls">
         <nav class="tasks-switch">
-            <a href="/?f=all"
+            <a href="/?f=all&id=<?=$id_project?>"
                class="tasks-switch__item <?php if ($filter === 'all') : ?>tasks-switch__item--active<?php endif; ?>">Все
                 задачи</a>
             <a href="/?f=now"
@@ -73,7 +58,7 @@
                             <?php endif; ?>
                         </td>
                         <td class="task__date"><?= $value['date_of_completion']; ?></td>
-                        <td class="task__controls"><?= $value['name']; ?></td>
+                        <td class="task__controls"><?= htmlspecialchars($value['name']); ?></td>
                     </tr>
                 <?php endif; ?>
             <?php endforeach; ?>

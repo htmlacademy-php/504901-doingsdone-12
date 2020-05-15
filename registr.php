@@ -13,7 +13,11 @@ $rules = [
         return validateFilled($_POST['password']);
     },
     'name' => function () {
-        return validateFilled($_POST['name']);
+        $empty = validateFilled($_POST['name']);
+        if ($empty) {
+            return $empty;
+        }
+        return isCorrectLength($_POST['name'], 1, 30);
     }
 ];
 

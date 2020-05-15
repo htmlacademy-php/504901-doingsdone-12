@@ -17,7 +17,6 @@ if (isset($_SESSION['user_id'])) {
         ]);
     } else {
         if (isset($_GET['task_id'])) {
-            //print('change');
             change_status($_GET['task_id'], $con);
         }
         if (isset($_GET['show_completed'])) {
@@ -44,7 +43,7 @@ if (isset($_SESSION['user_id'])) {
     $page_content = include_template('guest.php', []);
 }
 $layout_content = include_template('layout.php',
-    ['content' => $page_content, 'title' => 'Дела в порядке', 'user' => $user]);
+    ['content' => $page_content, 'title' => 'Дела в порядке', 'user' => $user, 'id_project' => $_GET['id'] ?? '']);
 print($layout_content);
 
 
