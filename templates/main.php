@@ -54,10 +54,10 @@ print(include_template('nav_menu.php', [
                         <td class="task__file">
                             <?php if ($value['file']): ?>
                                 <a class="download-link"
-                                   href="<?= '/uploads/' . $value['file']; ?>"><?= $value['file']; ?></a>
+                                   href="<?= '/uploads/' . $value['file']; ?>"><?= htmlspecialchars($value['file']); ?></a>
                             <?php endif; ?>
                         </td>
-                        <td class="task__date"><?= $value['date_of_completion']; ?></td>
+                        <td class="task__date"><?= htmlspecialchars($value['date_of_completion']); ?></td>
                         <td class="task__controls"><?= htmlspecialchars($value['name']); ?></td>
                     </tr>
                 <?php endif; ?>
